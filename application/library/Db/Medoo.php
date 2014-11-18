@@ -116,6 +116,9 @@ class Db_Medoo
 				$this->option
 			);
 
+            // auto throw exception -- by kzw
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 			foreach ($commands as $value)
 			{
 				$this->pdo->exec($value);	
