@@ -17,9 +17,8 @@ class IndexController extends Ctrl_Base {
      */
     public function indexAction() {
         $dao = new IndexModel();
-        $rs = $dao->select("account", "user_name", [
-            "user_id" => 1
+        $dao->insert("test", [
+            "test" => md5(mt_rand().microtime(true))
         ]);
-        var_dump($rs);
 	}
 }
