@@ -5,10 +5,11 @@
  * 继承medoo，此层实现一些通用的封装方法
  * @author 邝忠武 175156573qq.com
  */
-class Mod_Base extends Db_Medoo{
+class Mod_Base extends Db_Medoo
+{
 
-    function init(){
-        parent::__construct();
+    function init($options = null, $pConfig = 'default') {
+        parent::__construct($options, $pConfig);
     }
 
     /**
@@ -19,10 +20,10 @@ class Mod_Base extends Db_Medoo{
     /**
      * 事务开启
      */
-    function begin(){
+    function begin() {
         # 已经有事务，退出事务
         $this->back();
-        if(!$this->pdo->beginTransaction()){
+        if (!$this->pdo->beginTransaction()) {
             return false;
         }
         $this->_begin_transaction = true;
@@ -32,8 +33,8 @@ class Mod_Base extends Db_Medoo{
     /**
      * 事务提交
      */
-    function commit(){
-        if($this->_begin_transaction) {
+    function commit() {
+        if ($this->_begin_transaction) {
             $this->_begin_transaction = false;
             $this->pdo->commit();
         }
@@ -43,8 +44,8 @@ class Mod_Base extends Db_Medoo{
     /**
      * 事务回滚
      */
-    function back(){
-        if($this->_begin_transaction) {
+    function back() {
+        if ($this->_begin_transaction) {
             $this->_begin_transaction = false;
             $this->pdo->rollback();
         }
