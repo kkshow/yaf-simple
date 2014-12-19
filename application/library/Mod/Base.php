@@ -7,8 +7,8 @@
  */
 class Mod_Base extends Db_Medoo{
 
-    function init($options = null, $pConfig = 'default'){
-        parent::__construct($options, $pConfig);
+    function init(){
+        parent::__construct();
     }
 
     /**
