@@ -9,7 +9,9 @@
 class IndexModel extends Mod_Base
 {
 
-    function init() {
-        parent::init();
+    function __construct($options = null, $pConfig = 'default') {
+        parent::__construct($options, $pConfig);
     }
+
+    public $table = 'test';
 }
