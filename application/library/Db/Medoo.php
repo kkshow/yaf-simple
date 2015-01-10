@@ -39,17 +39,19 @@ class Db_Medoo
     // Variable
     protected $queryString;
 
-    public $pdo;
+    protected $pdo;
 
     // Object - Modify At 2014/11/26
     protected static $instance;
 
-    public function __construct($options = null, $pConfig = 'default') {
+    public function __construct($options = null, $pConfig = 'default')
+    {
 
         $this->pdo = $this->getInstance($options, $pConfig);
     }
 
-    public function getInstance($options = null, $pConfig = 'default') {
+    public function getInstance($options = null, $pConfig = 'default')
+    {
         if (!isset(self::$instance[$pConfig])) {
             try {
                 $commands = array();
@@ -133,27 +135,32 @@ class Db_Medoo
         return self::$instance[$pConfig];
     }
 
-    public function query($query) {
+    public function query($query)
+    {
         $this->queryString = $query;
 
         return $this->pdo->query($query);
     }
 
-    public function exec($query) {
+    public function exec($query)
+    {
         $this->queryString = $query;
 
         return $this->pdo->exec($query);
     }
 
-    public function quote($string) {
+    public function quote($string)
+    {
         return $this->pdo->quote($string);
     }
 
-    protected function column_quote($string) {
+    protected function column_quote($string)
+    {
         return '"' . str_replace('.', '"."', preg_replace('/(^#|\(JSON\))/', '', $string)) . '"';
     }
 
-    protected function column_push($columns) {
+    protected function column_push($columns)
+    {
         if ($columns == '*') {
             return $columns;
         }
@@ -177,7 +184,8 @@ class Db_Medoo
         return implode($stack, ',');
     }
 
-    protected function array_quote($array) {
+    protected function array_quote($array)
+    {
         $temp = array();
 
         foreach ($array as $value) {
@@ -187,7 +195,8 @@ class Db_Medoo
         return implode($temp, ',');
     }
 
-    protected function inner_conjunct($data, $conjunctor, $outer_conjunctor) {
+    protected function inner_conjunct($data, $conjunctor, $outer_conjunctor)
+    {
         $haystack = array();
 
         foreach ($data as $value) {
@@ -197,7 +206,8 @@ class Db_Medoo
         return implode($outer_conjunctor . ' ', $haystack);
     }
 
-    protected function fn_quote($column, $string) {
+    protected function fn_quote($column, $string)
+    {
         return (strpos($column, '#') === 0 && preg_match('/^[A-Z0-9\_]*\([^)]*\)$/', $string)) ?
 
             $string :
@@ -205,7 +215,8 @@ class Db_Medoo
             $this->quote($string);
     }
 
-    protected function data_implode($data, $conjunctor, $outer_conjunctor = null) {
+    protected function data_implode($data, $conjunctor, $outer_conjunctor = null)
+    {
         $wheres = array();
 
         foreach ($data as $key => $value) {
@@ -309,7 +320,8 @@ class Db_Medoo
         return implode($conjunctor . ' ', $wheres);
     }
 
-    protected function where_clause($where) {
+    protected function where_clause($where)
+    {
         $where_clause = '';
 
         if (is_array($where)) {
@@ -439,7 +451,8 @@ class Db_Medoo
         return $where_clause;
     }
 
-    protected function select_context($table, $join, &$columns = null, $where = null, $column_fn = null) {
+    protected function select_context($table, $join, &$columns = null, $where = null, $column_fn = null)
+    {
         $table = '"' . $table . '"';
         $join_key = is_array($join) ? array_keys($join) : null;
 
@@ -524,7 +537,8 @@ class Db_Medoo
         return 'SELECT ' . $column . ' FROM ' . $table . $this->where_clause($where);
     }
 
-    public function select($table, $join, $columns = null, $where = null) {
+    public function select($table, $join, $columns = null, $where = null)
+    {
         $query = $this->query($this->select_context($table, $join, $columns, $where));
 
         return $query ? $query->fetchAll(
@@ -532,7 +546,8 @@ class Db_Medoo
         ) : false;
     }
 
-    public function insert($table, $datas) {
+    public function insert($table, $datas)
+    {
         $lastId = array();
 
         // Check indexed or associative array
@@ -583,7 +598,8 @@ class Db_Medoo
         return count($lastId) > 1 ? $lastId : $lastId[0];
     }
 
-    public function update($table, $data, $where = null) {
+    public function update($table, $data, $where = null)
+    {
         $fields = array();
 
         foreach ($data as $key => $value) {
@@ -627,11 +643,13 @@ class Db_Medoo
         return $this->exec('UPDATE "' . $table . '" SET ' . implode(', ', $fields) . $this->where_clause($where));
     }
 
-    public function delete($table, $where) {
+    public function delete($table, $where)
+    {
         return $this->exec('DELETE FROM "' . $table . '"' . $this->where_clause($where));
     }
 
-    public function replace($table, $columns, $search = null, $replace = null, $where = null) {
+    public function replace($table, $columns, $search = null, $replace = null, $where = null)
+    {
         if (is_array($columns)) {
             $replace_query = array();
 
@@ -661,7 +679,8 @@ class Db_Medoo
         return $this->exec('UPDATE "' . $table . '" SET ' . $replace_query . $this->where_clause($where));
     }
 
-    public function get($table, $columns, $where = null) {
+    public function get($table, $columns, $where = null)
+    {
         if (!isset($where)) {
             $where = array();
         }
@@ -673,45 +692,54 @@ class Db_Medoo
         return isset($data[0]) ? $data[0] : false;
     }
 
-    public function has($table, $join, $where = null) {
+    public function has($table, $join, $where = null)
+    {
         $column = null;
 
         return $this->query('SELECT EXISTS(' . $this->select_context($table, $join, $column, $where, 1) . ')')->fetchColumn() === '1';
     }
 
-    public function count($table, $join = null, $column = null, $where = null) {
+    public function count($table, $join = null, $column = null, $where = null)
+    {
         return 0 + ($this->query($this->select_context($table, $join, $column, $where, 'COUNT'))->fetchColumn());
     }
 
-    public function max($table, $join, $column = null, $where = null) {
+    public function max($table, $join, $column = null, $where = null)
+    {
         $max = $this->query($this->select_context($table, $join, $column, $where, 'MAX'))->fetchColumn();
 
         return is_numeric($max) ? $max + 0 : $max;
     }
 
-    public function min($table, $join, $column = null, $where = null) {
+    public function min($table, $join, $column = null, $where = null)
+    {
         $min = $this->query($this->select_context($table, $join, $column, $where, 'MIN'))->fetchColumn();
 
         return is_numeric($min) ? $min + 0 : $min;
     }
 
-    public function avg($table, $join, $column = null, $where = null) {
+    public function avg($table, $join, $column = null, $where = null)
+    {
         return 0 + ($this->query($this->select_context($table, $join, $column, $where, 'AVG'))->fetchColumn());
     }
 
-    public function sum($table, $join, $column = null, $where = null) {
+    public function sum($table, $join, $column = null, $where = null)
+    {
         return 0 + ($this->query($this->select_context($table, $join, $column, $where, 'SUM'))->fetchColumn());
     }
 
-    public function error() {
+    public function error()
+    {
         return $this->pdo->errorInfo();
     }
 
-    public function last_query() {
+    public function last_query()
+    {
         return $this->queryString;
     }
 
-    public function info() {
+    public function info()
+    {
         $output = array(
             'server' => 'SERVER_INFO',
             'driver' => 'DRIVER_NAME',
