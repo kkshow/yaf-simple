@@ -5,11 +5,29 @@
  * 继承medoo，此层实现一些通用的封装方法
  * @author 邝忠武 175156573qq.com
  */
-class Mod_Base extends Db_Medoo
+class Mod_Base
 {
 
     function __construct($options = null, $pConfig = 'default') {
-        parent::__construct($options, $pConfig);
+
+        // 实例化DB操作类
+        $this->db = $this->getInstance($options, $pConfig);
+    }
+
+    public $db;
+    public static $instance = [];
+
+    /**
+     * 获取数据库实例
+     * @param null $options
+     * @param string $pConfig
+     */
+    public function getInstance($options = null, $pConfig = 'default') {
+
+        if (!isset(self::$instance[$pConfig])) {
+            self::$instance[$pConfig] = new Db_Medoo($options);
+        };
+        return self::$instance[$pConfig];
     }
 
     public $pk = 'id';
@@ -24,7 +42,7 @@ class Mod_Base extends Db_Medoo
      * @return array
      */
     public function getList($condition = [], $field = '*') {
-        return $this->select($this->table, $field, $condition);
+        return $this->db->select($this->table, $field, $condition);
     }
 
     /**
@@ -34,8 +52,7 @@ class Mod_Base extends Db_Medoo
      * @return array
      */
     public function getRow($condition = [], $field = '*') {
-        echo $this->table;
-        return $this->get($this->table, $field, $condition);
+        return $this->db->get($this->table, $field, $condition);
     }
 
     /**
@@ -46,7 +63,7 @@ class Mod_Base extends Db_Medoo
      */
     public function getField($condition = [], $field) {
         if ($field) {
-            $row = $this->getRow($condition, $field);
+            $row = $this->db->getRow($condition, $field);
             return $row[$field];
         } else {
             return '';
@@ -66,7 +83,7 @@ class Mod_Base extends Db_Medoo
     public function begin() {
         # 已经有事务，退出事务
         $this->back();
-        if (!$this->pdo->beginTransaction()) {
+        if (!$this->db->pdo->beginTransaction()) {
             return false;
         }
         $this->_begin_transaction = true;
@@ -79,7 +96,7 @@ class Mod_Base extends Db_Medoo
     public function commit() {
         if ($this->_begin_transaction) {
             $this->_begin_transaction = false;
-            $this->pdo->commit();
+            $this->db->pdo->commit();
         }
         return true;
     }
@@ -90,7 +107,7 @@ class Mod_Base extends Db_Medoo
     public function back() {
         if ($this->_begin_transaction) {
             $this->_begin_transaction = false;
-            $this->pdo->rollback();
+            $this->db->pdo->rollback();
         }
         return false;
     }
