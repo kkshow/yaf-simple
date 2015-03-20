@@ -10,12 +10,7 @@ class ErrorController extends yaf_controller_abstract
      * @param $exception
      */
     public function errorAction($exception) {
-        echo $exception->getCode();
         switch ($exception->getCode()) {
-            case 0 :
-                // 未定义的类型
-                $errorMsg = $exception->getMessage();
-                break;
             # 模块、控制层、动作、视图层读取失败
             case 515: // YAF_ERR_NOTFOUND_MODULE
             case 516: // YAF_ERR_NOTFOUND_CONTROLLER
