@@ -11,7 +11,24 @@ class Mod_Base
     function __construct($options = null, $pConfig = 'default') {
 
         // 实例化DB操作类
-        $this->db = $this->getInstance($options, $pConfig);
+        $this->db = DB_USE ? $this->getInstance($options, $pConfig) : $this;
+    }
+
+    /**
+     * 未定义函数处理
+     * 如果未启用数据库连接调用数据库操作方法时，提示错误
+     * @param $pMethod
+     * @param $pArgs
+     * @throws Exception
+     */
+    function __call($pMethod, $pArgs) {
+        if (!DB_USE) {
+            $tempDb = new Db_Medoo();
+            if (method_exists($tempDb, $pMethod)) {
+                throw new Exception('未启用数据库连接，需要将配置文件中的db.use设置为1。');
+            }
+        }
+        throw new Exception('未定义的方法');
     }
 
     public $db;

@@ -22,6 +22,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract
         define('PATH_BASE', $baseUrl);                                                             # 项目访问路径
 
         // 初始化数据库的配置
+        define('DB_USE', Yaf_Registry::get("config")->db->use);                                    # 是否已用数据库
         define('DB_TYPE', Yaf_Registry::get("config")->db->dbtype);                                # 数据库类型
         define('DB_HOST', Yaf_Registry::get("config")->db->host->master);                          # 主库地址
         define('DB_PORT', Yaf_Registry::get("config")->db->port);                                  # 端口号
