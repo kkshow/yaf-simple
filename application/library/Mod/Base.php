@@ -43,7 +43,7 @@ class Mod_Base
 
         if (!isset(self::$instance[$pConfig])) {
             self::$instance[$pConfig] = new Db_Medoo($options);
-        };
+        }
         return self::$instance[$pConfig];
     }
 
